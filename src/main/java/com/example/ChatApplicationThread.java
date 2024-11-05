@@ -20,13 +20,40 @@ public class ChatApplicationThread extends Thread {
         
     }
 
+
+    CharSequence caratteriVietati = "!\"#$%&'()*+,/:;<=>?@[]^{}|~`";
+
     @Override
     public void run(){
         try {
             in = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));;
             out = new DataOutputStream(socketClient.getOutputStream());
             
-            try {
+
+
+            try { 
+                boolean check = true;
+                do{
+                    String userName = in.readLine();
+                    if(userName.contains(caratteriVietati)){
+                        out.writeBytes("ERROR_402");
+                        check = false;
+                    }else{
+                        check = true;
+                        break;
+                    }
+                }while (check == false);
+
+                
+                
+                
+                
+                
+                
+                        
+                
+               
+                //invio del messaggio a tutti gli utenti
                 String message = "";
                 while ((message = in.readLine()) != null) {
                     if (message.equalsIgnoreCase("exit")) {
