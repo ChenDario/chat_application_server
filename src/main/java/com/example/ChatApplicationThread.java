@@ -6,13 +6,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
 
 public class ChatApplicationThread extends Thread {
     private Socket socketClient;
-    private List<ChatApplicationThread> clients; // Lista dei client connessi
+    private ArrayList<ChatApplicationThread> clients; // Lista dei client connessi
     private BufferedReader in;
     private DataOutputStream out;
+    private String userName = "";
 
     public ChatApplicationThread(Socket s, ArrayList<ChatApplicationThread> clients){
         this.socketClient = s;
@@ -23,25 +23,19 @@ public class ChatApplicationThread extends Thread {
     @Override
     public void run(){
         try {
-            in = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));;
+            in = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));
             out = new DataOutputStream(socketClient.getOutputStream());
             
+
             try {
-                String message = "";
-                while ((message = in.readLine()) != null) {
-                    if (message.equalsIgnoreCase("exit")) {
-                        System.out.println("Il client si è disconnesso.");
-                        break;
-                    } else {
-                        System.out.println("Messaggio ricevuto: " + message);
-                        // Invia il messaggio agli altri client
-                        for (ChatApplicationThread client : clients) {
-                            if (client != this) { // Invia a tutti gli altri tranne che a sé stesso
-                                client.sendMessage(message);
-                            }
-                        }
-                    }
-                }
+                String ans;
+                //Ricevo l'username per il controllo
+                do {
+                    ans = UsernameIdentification.username_status(in, clients);
+                    out.writeBytes(ans + "\n");
+                    System.out.println("Status dell'username: " + ans);
+                } while (ans.contains("ERROR") || ans.contains("<") || ans.contains(">"));
+                userName = UsernameIdentification.getUsername();
 
             } catch (IOException e) {
                 // TODO: handle exception
@@ -65,4 +59,12 @@ public class ChatApplicationThread extends Thread {
     public void sendMessage(String message) throws IOException {
         out.writeBytes(message + "\n");
     }
+
+    //metodo getUsername
+    public String getUserName(){
+        return this.userName;
+    }
+
+
+
 }
