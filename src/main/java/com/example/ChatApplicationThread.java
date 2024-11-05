@@ -32,18 +32,37 @@ public class ChatApplicationThread extends Thread {
 
 
             try { 
-                boolean check = true;
+                //controllo della validità dell'username 
+                boolean check = false;
+                boolean contieneVietati = false;
                 do{
                     String userName = in.readLine();
-                    if(userName.contains(caratteriVietati)){
-                        out.writeBytes("ERROR_402");
+                    contieneVietati = false;
+                    //controllo la presenza di caratteriVietati dell'username
+                    for (int i = 0; i < caratteriVietati.length(); i++) {
+                        if (userName.indexOf(caratteriVietati.charAt(i)) != -1) {
+                            contieneVietati = true;
+                            break;
+                        }
+                    }
+                    if(contieneVietati == true){
+                        out.writeBytes("ERROR_402" + "\n");
                         check = false;
                     }else{
-                        check = true;
-                        break;
+                        //controllo se l'username è uguale ad un'elemento della lista comandi
+                        if(userName.equals("username") || userName.equals("Everyone") || userName.equals("group_name") || userName.equals("active_user") || userName.equals("create_group") 
+                        || userName.equals("stop") || userName.equals("add_user") || userName.equals("accept") || userName.equals("reject") || userName.equals("accept_all") 
+                        || userName.equals("reject_all")){
+                            check = false;
+                        }else{
+                            check = true;
+                        }
                     }
                 }while (check == false);
 
+                //switch
+
+                
                 
                 
                 
