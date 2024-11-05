@@ -13,6 +13,7 @@ public class ChatApplicationThread extends Thread {
     private List<ChatApplicationThread> clients; // Lista dei client connessi
     private BufferedReader in;
     private DataOutputStream out;
+    private String userName = "";
 
     public ChatApplicationThread(Socket s, ArrayList<ChatApplicationThread> clients){
         this.socketClient = s;
@@ -36,8 +37,15 @@ public class ChatApplicationThread extends Thread {
                 boolean check = false;
                 boolean contieneVietati = false;
                 do{
-                    String userName = in.readLine();
+                    userName = in.readLine();
                     contieneVietati = false;
+                    //controllo se l'username è già presente in lista
+                    if(this.cercaUser(userName).equals("ERROR_402")){
+                        out.writeBytes("ERROR_402" + "\n");
+                        check = false;
+                    }else{
+
+                    
                     //controllo la presenza di caratteriVietati dell'username
                     for (int i = 0; i < caratteriVietati.length(); i++) {
                         if (userName.indexOf(caratteriVietati.charAt(i)) != -1) {
@@ -53,13 +61,17 @@ public class ChatApplicationThread extends Thread {
                         if(userName.equals("username") || userName.equals("Everyone") || userName.equals("group_name") || userName.equals("active_user") || userName.equals("create_group") 
                         || userName.equals("stop") || userName.equals("add_user") || userName.equals("accept") || userName.equals("reject") || userName.equals("accept_all") 
                         || userName.equals("reject_all")){
+                            out.writeBytes("ERROR_402" + "\n");
                             check = false;
                         }else{
                             check = true;
                         }
                     }
+                }
+
                 }while (check == false);
 
+                out.writeBytes("Welcome" + "\n");
                 //switch
 
                 
@@ -110,5 +122,20 @@ public class ChatApplicationThread extends Thread {
     // Metodo per inviare un messaggio a questo client
     public void sendMessage(String message) throws IOException {
         out.writeBytes(message + "\n");
+    }
+
+    //metodo getUsername
+    public String getUserName(){
+        return this.userName;
+    }
+
+    //metodo per aggiungere gli username all'arraylist
+    public String cercaUser(String x){
+        for(int i = 0;i < clients.size();i++){
+            if(clients.get(i).getUserName().equals(x)){
+                return "ERROR_402" + "\n";
+            }
+        }
+            return "Welcome" + "\n";
     }
 }
