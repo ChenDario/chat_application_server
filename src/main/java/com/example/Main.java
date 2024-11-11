@@ -6,9 +6,13 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class Main {
-    //Per avere la lista di tutti i client che si collegano
-    private static ArrayList<ChatApplicationThread> clients = new ArrayList<>();
+
     public static void main(String[] args) throws IOException {
+
+        //Per avere la lista di tutti i client che si collegano e i gruppi che vengono creati con relativo codice
+        ArrayList<ChatApplicationThread> clients = new ArrayList<>();
+        ArrayList<Group> groups = new ArrayList<>();
+        ArrayList<String> generated_group_codes = new ArrayList<>();
 
         System.out.println("Server avviato");
         ServerSocket server = new ServerSocket(3000);
@@ -17,7 +21,7 @@ public class Main {
             Socket s = server.accept();
             System.out.println("Il Client si è connesso");
 
-            ChatApplicationThread t = new ChatApplicationThread(s, clients);
+            ChatApplicationThread t = new ChatApplicationThread(s, clients, groups,generated_group_codes);
             clients.add(t);
             t.start();
 

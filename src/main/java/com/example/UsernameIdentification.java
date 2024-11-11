@@ -35,6 +35,17 @@ public class UsernameIdentification {
             if (name.indexOf(caratteriVietati.charAt(i)) >= 0)
                 return true; 
         }
+        //String contenente i comandi che non devono essere presenti nel nome
+        String[] comands = {
+            "/active_user", "/create_group", "/stop", "/add_user", 
+            "/accept", "/reject", "/accept_all", "/reject_all", "/join_G@"
+        };
+
+        for(String comand: comands){
+            if(name.contains(comand))
+                return true;
+        }
+
         return false;
     }
 
@@ -53,4 +64,5 @@ public class UsernameIdentification {
     public static String getUsername() {
         return username;
     }
+
 }
