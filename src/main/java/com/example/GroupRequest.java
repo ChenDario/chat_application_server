@@ -19,13 +19,27 @@ public class GroupRequest {
     //Handle all the group_chat kind of requests
     public void group_requests(String richiesta, String messaggio, String from_user) throws IOException{
         try {
+
             //Richiesta di stampa di tutti i gruppi che l'utente è dentro
             if(richiesta.charAt(1) == '@'){
                 if(messaggio.isBlank() && richiesta.equals("G@_list") && !groups.isEmpty()){
                     out.writeBytes("SRV_200" + "\n");
                     out.writeBytes(getAllGroups(this.groups) + "\n");
                 }
+
+
+                // per gestire l'uscita da un gruppo
+                if(richiesta.contains("/left_G@")){
+                   
+                        
+                    
+                }
                 
+                //per visualizzare tutti i membri di un gruppo
+                if(richiesta.contains("/users_group")){
+                    
+                }
+
                 //ottengo il nome del gruppo
                 String groupName = richiesta.substring(2);
                 //Se deve mandare un messaggio ad un gruppo, ed è presente
@@ -35,6 +49,8 @@ public class GroupRequest {
                 }
                     
                 
+
+
             } else {
                 out.writeBytes("ERROR_405" + "\n");
             }
@@ -46,7 +62,7 @@ public class GroupRequest {
     }
 
     //If the user is in that group
-    public int findGroup(ArrayList<Group> groups, String nome_gruppo){
+    public static int findGroup(ArrayList<Group> groups, String nome_gruppo){
 
         if(!groups.isEmpty()){
             for(int i = 0; i < groups.size(); i++){
@@ -72,4 +88,7 @@ public class GroupRequest {
         }
         return "ERROR_404_G";
     }
+
+    //to let the user abbandone a group 
+  
 }

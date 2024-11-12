@@ -62,7 +62,27 @@ public class OtherRequests {
                 case "/join_G@":
                     addUserToGroupChat(messaggio, this.groups);
                     break;
-                
+
+                case "/users_group": //per mostrare tutti i membri di un gruppo
+                    int posGroup = GroupRequest.findGroup(groups, messaggio);
+                    String membriGruppo = groups.get(posGroup).getGroupUsers();
+                    out.writeBytes("");
+                    out.writeBytes(membriGruppo);
+                    break;
+
+                case "/left_G@": // per gestire l'uscità da un gruppo
+                int pos = GroupRequest.findGroup(groups, messaggio); // cerco la posizione del gruppo dal qual l'utente vuole uscire
+                   if(pos == -1){ // controllo se la posizione esiste ed è valida
+                    out.writeBytes("ERROR_404_G" + "\n");
+                   }else{
+                    if(groups.get(pos).removeUserFromGroup(from_user).equals("RMV_200")){
+                        out.writeBytes("RMV_200" + "\n"); // informo il client che la rimozione è avvenuta con successo
+                        out.writeBytes(groups.get(pos).getGroup_name() + "\n");
+                        out.writeBytes(groups.get(pos).getGroup_code() + "\n");
+                    }
+                   }
+                   break;
+
                 default:
                     out.writeBytes("ERROR_500" + "\n");
                     System.out.println("Errore nell'inserimento del comando");

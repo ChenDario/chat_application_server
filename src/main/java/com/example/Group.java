@@ -20,6 +20,9 @@ public class Group {
     }
 
     public String addIntoGroup(String user){
+        if(!findUserInGroup(this.group_creator)){
+            group.add(group_creator);
+        }
         if(this.group.isEmpty() || !findUserInGroup(user)){
             //If the group is empty
             this.group.add(user);
@@ -68,7 +71,7 @@ public class Group {
         }
     }
 
-    public String getGroupUsers(){
+    public String getGroupUsers(){ 
         String toString = "G@" + this.group_name + " - Users: ";
 
         if(this.group.isEmpty())
@@ -81,7 +84,7 @@ public class Group {
         return toString;
     }
 
-    public boolean findUserInGroup(String username){
+    public boolean findUserInGroup(String username){ // metodo che cerca l'utente all'interno del gruppo
 
         if(!this.group.isEmpty()){
             for(String user: this.group){
@@ -90,6 +93,16 @@ public class Group {
             }
         }
         return false; 
+    }
+
+    public String removeUserFromGroup(String userName){ // metodo per rimuovere un'utente da un gruppo
+        if (!this.group.isEmpty()) {
+            if (this.findUserInGroup(userName)) {
+                this.group.remove(userName);
+                return "RMV_200";
+            }
+        }
+        return "ERROR_404_P";
     }
 
     public int usersInGroup(){
