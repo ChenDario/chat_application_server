@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.HashMap;
 
 public class OtherRequests {
     private BufferedReader in;
@@ -12,51 +13,36 @@ public class OtherRequests {
     private ArrayList<ChatApplicationThread> clients;
     private ArrayList<String> generated_group_codes;
     private ArrayList<Group> groups;
+    private HashMap<String, String> users_key;
 
-    public OtherRequests(BufferedReader in, DataOutputStream out, ArrayList<ChatApplicationThread> clients, ArrayList<Group> groups, ArrayList<String> generated_group_codes){
+    public OtherRequests(BufferedReader in, DataOutputStream out, ArrayList<ChatApplicationThread> clients, ArrayList<Group> groups, ArrayList<String> generated_group_codes, HashMap<String, String> users_key){
         this.in = in;
         this.out = out;
         this.clients = clients;
         this.groups = groups;
         this.generated_group_codes = generated_group_codes;
+        this.users_key = users_key;
     }
 
     //Handle all the remaing kind of request (/)
     public void handleRequest(String richiesta, String messaggio, String from_user){
         try {
             switch(richiesta){
+                case "/RequestKey":
+                    break;
+
                 case "/create_group":
                     //Sout for debug
                     System.out.println("Richiesta inoltrata 1");
                     create_group(messaggio, this.groups, from_user);
                     break;
                 
-                case "/add_user":
-                    
-                    break;
-                
-                case "/accept":
-                    
-                    break;
-                
-                case "/accept_all":
-                    
-                    break;
-                
-                case "/reject":
-                    
-                    break;
-                
-                case "/reject_all":
-                    
-                    break;
-
-                case "/show_command":
-                    show_command();
-                    break;
-                
                 case "/list_all":
-                    
+                    PrivateRequest pr = new PrivateRequest(out, clients);
+                    GroupRequest gr = new GroupRequest(out, clients, groups);
+
+                    pr.getAllPrivateChats();
+                    gr.getAllGroups();
                     break;
                 
                 case "/join_G@":
@@ -64,24 +50,24 @@ public class OtherRequests {
                     break;
 
                 case "/users_group": //per mostrare tutti i membri di un gruppo
-                    int posGroup = GroupRequest.findGroup(groups, messaggio);
-                    String membriGruppo = groups.get(posGroup).getGroupUsers();
-                    out.writeBytes("");
-                    out.writeBytes(membriGruppo);
+                    usersGroup(messaggio, this.groups);
                     break;
 
                 case "/left_G@": // per gestire l'uscità da un gruppo
-                int pos = GroupRequest.findGroup(groups, messaggio); // cerco la posizione del gruppo dal qual l'utente vuole uscire
-                   if(pos == -1){ // controllo se la posizione esiste ed è valida
-                    out.writeBytes("ERROR_404_G" + "\n");
-                   }else{
-                    if(groups.get(pos).removeUserFromGroup(from_user).equals("RMV_200")){
-                        out.writeBytes("RMV_200" + "\n"); // informo il client che la rimozione è avvenuta con successo
-                        out.writeBytes(groups.get(pos).getGroup_name() + "\n");
-                        out.writeBytes(groups.get(pos).getGroup_code() + "\n");
+                    int pos = GroupRequest.findGroup(groups, messaggio); // cerco la posizione del gruppo dal qual l'utente vuole uscire
+                    
+                    if(pos != -1){
+                        String ans = groups.get(pos).removeUserFromGroup(from_user);
+                        if(ans.equals("RMV_200")){
+                            out.writeBytes("RMV_200" + "\n"); // informo il client che la rimozione è avvenuta con successo
+                            out.writeBytes(groups.get(pos).getGroup_name() + "\n");
+                            out.writeBytes(groups.get(pos).getGroup_code() + "\n");
+                        }
+                    } else {
+                        out.writeBytes("ERROR_404_G\n");
                     }
-                   }
                    break;
+
 
                 default:
                     out.writeBytes("ERROR_500" + "\n");
@@ -90,6 +76,30 @@ public class OtherRequests {
             }
         } catch (Exception e) {
             // TODO: handle exception
+            System.out.println("ERROR with the handling request");
+        }
+    }
+
+    public void sendKey(String user, ArrayList<ChatApplicationThread> clients) throws IOException{
+        if(UsernameIdentification.findUser(user, clients)){
+            String key = users_key.get(user);
+            out.writeBytes("PUBLIC_KEY\n");
+            out.writeBytes(user + "\n");
+            out.writeBytes(key + "\n");
+        }
+    }
+
+    public void usersGroup(String messaggio, ArrayList<Group> groups) throws IOException{
+        if(!groups.isEmpty()){
+            for(Group g : groups){
+                if(g.getGroup_name().equals(messaggio)){
+                    out.writeBytes("SRV_200" + "\n");
+                    out.writeBytes(g.getGroupUsers() + "\n");
+                    break;
+                }
+            }
+        } else {
+            out.writeBytes("ERROR_404_G");
         }
     }
 
@@ -216,43 +226,6 @@ public class OtherRequests {
             }
         }
         return false;
-    }
-
-    public void show_command() throws IOException{
-        //Array of String with the commands 
-        String[] commands = {
-            //Sending a message
-            "- - TO SEND A MESSAGE (no need for the \"\" in the actual command) - - ", 
-            "@nome_username \"message\" to send a message to user nome_username", 
-            "@All \"message\" to send a message to everyone", 
-            "G@group_name \"message\" to send a message to group group_name",
-            //Get Lists
-            "- - LISTS - - ", 
-            "@_list show all available private chats", 
-            "G@_list show all available groupchats", 
-            "/list_all to show both the available private chats and groupchats", 
-            "/show_command Print all the executable commands", 
-            //Create group or add user 
-            "- - GROUP CREATION / USER FRIENDSHIP AND OTHERS- - ", 
-            "/create_group \"group_name\" to create a group with group_name", 
-            "/add_user \"username\" to add user with username", 
-            "/accept Accept the last friendship request", 
-            "/accept_all Accept all friendship requests", 
-            "/reject Reject the last friendship request", 
-            "/reject_all Reject all friendship requests", 
-            "/join_G@ To add a user to the groupchat", 
-            "Enter EXIT to exit"
-        };
-
-        //Start to send
-        this.out.writeBytes("MENU_200" + "\n");
-
-        for(String commando : commands){
-            this.out.writeBytes(commando + "\n");
-        }
-
-        //End
-        this.out.writeBytes("MENU_300" + "\n");
     }
 
     public int findUser(String name){

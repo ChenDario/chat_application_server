@@ -4,15 +4,17 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        //Per avere la lista di tutti i client che si collegano e i gruppi che vengono creati con relativo codice
+        //Attributi
         ArrayList<ChatApplicationThread> clients = new ArrayList<>();
         ArrayList<Group> groups = new ArrayList<>();
         ArrayList<String> generated_group_codes = new ArrayList<>();
+        HashMap<String, String> publicKeys = new HashMap<>();
 
         System.out.println("Server avviato");
         ServerSocket server = new ServerSocket(3000);
@@ -21,7 +23,7 @@ public class Main {
             Socket s = server.accept();
             System.out.println("Il Client si è connesso");
 
-            ChatApplicationThread t = new ChatApplicationThread(s, clients, groups,generated_group_codes);
+            ChatApplicationThread t = new ChatApplicationThread(s, clients, groups,generated_group_codes, publicKeys);
             clients.add(t);
             t.start();
 

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ChatApplicationThread extends Thread {
     private Socket socketClient;
@@ -15,14 +16,16 @@ public class ChatApplicationThread extends Thread {
     private String userName = "";
     private ArrayList<Group> groups;    
     private ArrayList<String> generated_group_codes;
+    private HashMap<String, String> publicKeys;
 
-    public ChatApplicationThread(Socket s, ArrayList<ChatApplicationThread> clients, ArrayList<Group> groups, ArrayList<String> generated_group_codes) throws IOException {
+    public ChatApplicationThread(Socket s, ArrayList<ChatApplicationThread> clients, ArrayList<Group> groups, ArrayList<String> generated_group_codes, HashMap<String, String> publicKeys) throws IOException {
         this.socketClient = s;
         this.clients = clients;
         this.groups = groups; 
         this.in = new BufferedReader(new InputStreamReader(this.socketClient.getInputStream()));
         this.out = new DataOutputStream(this.socketClient.getOutputStream());
         this.generated_group_codes = generated_group_codes;
+        this.publicKeys = publicKeys;
     }
 
     @Override
@@ -31,8 +34,12 @@ public class ChatApplicationThread extends Thread {
             // Validazione dell'username
             username_validation(in, out);
 
+            //Save the user's public key
+            savePublicKey(in);
+            System.out.println("Public Key saved");
+
             // Ricevi richieste dal client finché non si disconnette
-            UserRequest.receive_user_requests(in, out, groups, clients, userName, generated_group_codes);
+            UserRequest.receive_user_requests(in, out, groups, clients, userName, generated_group_codes, publicKeys);
 
         } catch (IOException e) {
             System.err.println("Errore nella comunicazione con il client: " + e.getMessage());
@@ -55,6 +62,16 @@ public class ChatApplicationThread extends Thread {
                 clients.remove(this);
                 System.out.println("Client disconnesso e rimosso dalla lista.");
             }
+        }
+    }
+
+    public void savePublicKey(BufferedReader in) throws IOException{
+        String message = in.readLine();
+        
+        String[] publickey = message.split(" ", 2);
+
+        if(publickey[0].equals("PublicKey") && publickey[1] != null){
+            publicKeys.put(userName, publickey[1]);
         }
     }
 

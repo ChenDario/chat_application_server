@@ -16,14 +16,16 @@ public class PrivateRequest {
     //Handle all the private_chat kind of requests
     public void private_chat_requests(String richiesta, String messaggio, String from_user) throws IOException{
         try {
-
             // Se richiede la lista degli utenti disponibili
             if (richiesta.equals("@_list")) {
-                this.out.writeBytes("SRV_200\n");
-                this.out.writeBytes(getAllPrivateChats() + "\n");
+                getAllPrivateChats();
             } else{
-                // Invio Messaggio a chat privata
-                sendMessageToChat(richiesta, messaggio, from_user);
+                if(richiesta.equals("@All")){
+                    sendMessageToAll(messaggio, from_user);
+                } else {
+                    // Invio Messaggio a chat privata
+                    sendMessageToChat(richiesta, messaggio, from_user);
+                }
             }
         } catch (Exception e) {
             // TODO: handle exception
@@ -32,11 +34,10 @@ public class PrivateRequest {
     }
 
     //Get all the available private chats
-    public String getAllPrivateChats(){
-        
+    public void  getAllPrivateChats() throws IOException{
         //If not empty 
         if(!this.clients.isEmpty()){
-            StringBuilder availableUsers = new StringBuilder("Available Users: ");
+            StringBuilder availableUsers = new StringBuilder("CHAT: ");
 
             for (ChatApplicationThread user : this.clients) {
                 availableUsers.append(user.getUserName()).append(", ");
@@ -45,9 +46,27 @@ public class PrivateRequest {
             // Remove the trailing comma and space
             availableUsers.setLength(availableUsers.length() - 2);
 
-            return availableUsers.toString();
+            out.writeBytes("SRV_200\n");
+            out.writeBytes(availableUsers.toString() + "\n");
+        } else {
+            out.writeBytes("ERROR_404_P" + "\n");
         }
-        return "ERROR_404_P";
+    }
+
+    public void sendMessageToAll(String messaggio, String from_user) throws IOException{
+        if(clients.size() > 1){
+            for (ChatApplicationThread user : this.clients) {
+                //Invio il messaggio a tutti tranne che a me stesso
+                if(!user.getUserName().equals(from_user)){
+                    //output verso il client destinazione
+                    DataOutputStream clientOut = user.getOut();
+                    clientOut.writeBytes("From " + from_user + ": " + messaggio + "\n");
+                }
+            }
+            out.writeBytes("SUCC_201\n");
+        } else {
+            out.writeBytes("ERROR_407\n");
+        }
     }
 
     //Send message to chat

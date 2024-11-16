@@ -72,7 +72,7 @@ public class Group {
     }
 
     public String getGroupUsers(){ 
-        String toString = "G@" + this.group_name + " - Users: ";
+        String toString = "Group " + this.group_name + " - Users: ";
 
         if(this.group.isEmpty())
             return "ERROR_404";
