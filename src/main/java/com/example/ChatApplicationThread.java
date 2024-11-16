@@ -36,7 +36,9 @@ public class ChatApplicationThread extends Thread {
 
             //Save the user's public key
             savePublicKey(in);
-            System.out.println("Public Key saved");
+            for (String i : publicKeys.keySet()) {
+                System.out.println("Utente: " + i + " Chiave Pubblica: " + publicKeys.get(i));
+            }
 
             // Ricevi richieste dal client finché non si disconnette
             UserRequest.receive_user_requests(in, out, groups, clients, userName, generated_group_codes, publicKeys);

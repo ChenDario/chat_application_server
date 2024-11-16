@@ -52,7 +52,8 @@ public class UserRequest {
     public static boolean isRequest(String request){
         String[] requests = {
             "@" , "/create_group", 
-            "list", "/show_command"
+            "list", "/show_command", 
+            "/request_key"
         };
 
         for(String type: requests){

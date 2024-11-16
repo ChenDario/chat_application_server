@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.HashMap;
+import java.util.Random;
 
 public class OtherRequests {
     private BufferedReader in;
@@ -28,7 +28,10 @@ public class OtherRequests {
     public void handleRequest(String richiesta, String messaggio, String from_user){
         try {
             switch(richiesta){
-                case "/RequestKey":
+                //Non entra nel case perché ? 
+                case "/request_key":
+                    //Invia la chiave pubblica all'utente
+                    sendKey(messaggio, clients);
                     break;
 
                 case "/create_group":
@@ -227,7 +230,7 @@ public class OtherRequests {
         }
         return false;
     }
-
+    
     public int findUser(String name){
 
         if(!this.clients.isEmpty()){
