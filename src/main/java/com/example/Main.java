@@ -8,7 +8,6 @@ import java.util.HashMap;
     //Togliere un po' di sout di debug
 public class Main {
     public static void main(String[] args) throws IOException {
-
         //Attributi
         ArrayList<ChatApplicationThread> clients = new ArrayList<>();
         ArrayList<Group> groups = new ArrayList<>();

@@ -8,7 +8,6 @@ public class UsernameIdentification {
     private static String username;
     
     public static String username_status(BufferedReader in, ArrayList<ChatApplicationThread> clients) throws IOException{
-        
         username = in.readLine();
         //Se l'username è vuoto
         if(username.isEmpty())
@@ -28,8 +27,8 @@ public class UsernameIdentification {
     }
 
     public static boolean invalid_character(String name){
-        //Caratteri speciali vietati
-        CharSequence caratteriVietati = "!\"#$%&'()*+,/:;<=>?@[]^{}|~`";
+        //Caratteri speciali vietati    // I primi due \\ per intendere \ e il terzo \" per il "
+        CharSequence caratteriVietati = "!\\\"#$%&'()*+,/:;<=>?@[]^{}|~`";
         //Controllo presenza dei caratteri vietati
         for (int i = 0; i < caratteriVietati.length(); i++) {
             if (name.indexOf(caratteriVietati.charAt(i)) >= 0)
@@ -37,8 +36,7 @@ public class UsernameIdentification {
         }
         //String contenente i comandi che non devono essere presenti nel nome
         String[] comands = {
-            "/active_user", "/create_group", "/stop", "/add_user", 
-            "/accept", "/reject", "/accept_all", "/reject_all", "/join_G@"
+            "/active_user", "/create_group", "/request_key", "/join_G@", " "
         };
 
         for(String comand: comands){
