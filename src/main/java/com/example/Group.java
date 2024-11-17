@@ -54,7 +54,7 @@ public class Group {
                     
                     try {
                         DataOutputStream clientOutput = user.getOut();
-                        clientOutput.writeBytes("RCV_100\n");
+                        clientOutput.writeBytes("RCV_101\n");
                         clientOutput.writeBytes("From G@" + this.group_name + " by " + from_user + ": " + messaggio + "\n");
                     } catch (IOException e) {
                         System.out.println("Errore nell'invio del messaggio a " + username);
@@ -72,16 +72,17 @@ public class Group {
     }
 
     public String getGroupUsers(){ 
-        String toString = "Group " + this.group_name + " - Users: ";
+        String ans = "Group " + this.group_name + " - Users: ";
 
         if(this.group.isEmpty())
             return "ERROR_404";
 
         for(String client: this.group){
-            toString += client;
+            ans += client + ", ";
         }
-
-        return toString;
+        //Tolgo la virgola finale
+        System.out.println(ans.substring(0, ans.length() - 2));
+        return ans.substring(0, ans.length() - 2);
     }
 
     public boolean findUserInGroup(String username){ // metodo che cerca l'utente all'interno del gruppo
@@ -124,6 +125,10 @@ public class Group {
 
     public void setGroup_creator(String group_creator) {
         this.group_creator = group_creator;
+    }
+
+    public ArrayList<String> getGroup() {
+        return group;
     }
 
 }

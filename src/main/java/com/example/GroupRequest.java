@@ -26,8 +26,10 @@ public class GroupRequest {
                 } else {
                     //ottengo il nome del gruppo
                     String groupName = richiesta.substring(2);
+                    System.out.println("Nome gruppo: " + groupName);
                     //Se deve mandare un messaggio ad un gruppo, ed è presente
                     if(!messaggio.isBlank() && findGroup(groups, groupName) != -1){
+                        System.out.println("Messaggio di gruppo inviato");
                         groups.get(findGroup(groups, groupName)).sendMessageToGroupChat(clients, out, messaggio, from_user);
                         out.writeBytes("SUCC_200" + "\n");
                     } else {

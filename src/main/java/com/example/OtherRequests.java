@@ -36,14 +36,12 @@ public class OtherRequests {
 
                 case "/create_group":
                     //Sout for debug
-                    System.out.println("Richiesta inoltrata 1");
                     create_group(messaggio, this.groups, from_user);
                     break;
                 
                 case "/list_all":
                     PrivateRequest pr = new PrivateRequest(out, clients);
                     GroupRequest gr = new GroupRequest(out, clients, groups);
-
                     pr.getAllPrivateChats();
                     gr.getAllGroups();
                     break;
@@ -53,7 +51,7 @@ public class OtherRequests {
                     break;
 
                 case "/users_group": //per mostrare tutti i membri di un gruppo
-                    usersGroup(messaggio, this.groups);
+                    usersGroup(messaggio, groups);
                     break;
 
                 case "/left_G@": // per gestire l'uscità da un gruppo
@@ -71,7 +69,6 @@ public class OtherRequests {
                     }
                    break;
 
-
                 default:
                     out.writeBytes("ERROR_500" + "\n");
                     System.out.println("Errore nell'inserimento del comando");
@@ -83,7 +80,7 @@ public class OtherRequests {
         }
     }
 
-    public void sendKey(String user, ArrayList<ChatApplicationThread> clients) throws IOException{
+    private void sendKey(String user, ArrayList<ChatApplicationThread> clients) throws IOException{
         if(UsernameIdentification.findUser(user, clients)){
             String key = users_key.get(user);
             out.writeBytes("PUBLIC_KEY\n");
@@ -92,21 +89,18 @@ public class OtherRequests {
         }
     }
 
-    public void usersGroup(String messaggio, ArrayList<Group> groups) throws IOException{
+    private void usersGroup(String messaggio, ArrayList<Group> groups) throws IOException{
         if(!groups.isEmpty()){
-            for(Group g : groups){
-                if(g.getGroup_name().equals(messaggio)){
-                    out.writeBytes("SRV_200" + "\n");
-                    out.writeBytes(g.getGroupUsers() + "\n");
-                    break;
-                }
-            }
+            int pos = findGroup(messaggio);
+            String ans = groups.get(pos).getGroupUsers();
+            out.writeBytes("SRV_200\n");
+            out.writeBytes(ans + "\n");
         } else {
             out.writeBytes("ERROR_404_G");
         }
     }
 
-    public void addUserToGroupChat(String messaggio, ArrayList<Group> groups) throws IOException{
+    private void addUserToGroupChat(String messaggio, ArrayList<Group> groups) throws IOException{
         //Divide the String in two to get the group_name and the lists of user to add to that group
         String[] group_users = messaggio.split(" - ", 2);
 
@@ -156,7 +150,7 @@ public class OtherRequests {
     }
 
     //Find the pos of the given group_name in the lists of group
-    public int findGroup(String group_name){
+    private int findGroup(String group_name){
 
         if(!groups.isEmpty()){
             for(int i = 0; i < this.groups.size(); i++){
@@ -167,7 +161,7 @@ public class OtherRequests {
         return -1;
     }
 
-    public void create_group(String messaggio, ArrayList<Group> groups, String from_user) throws IOException{
+    private void create_group(String messaggio, ArrayList<Group> groups, String from_user) throws IOException{
         //Controllo degli caratteri invalidi
         if(!UsernameIdentification.invalid_character(messaggio)){
 
@@ -189,10 +183,6 @@ public class OtherRequests {
             //Group added to the list
             groups.add(g_tmp);
 
-            for(Group g : groups){
-                System.out.println("Gruppi: " + g.getGroup_name());
-            }
-
             //Invio il messaggio di conferma al client
             this.out.writeBytes("SUCC_200\n");
 
@@ -201,7 +191,7 @@ public class OtherRequests {
         }
     }
 
-    public String generateGroupCode(){
+    private String generateGroupCode(){
         String character = "0123456789QWERTYUIOPASDFGHJKLZXCVBNM";
         StringBuilder code = new StringBuilder();
         Random random = new Random();
@@ -221,7 +211,7 @@ public class OtherRequests {
         return code.toString();
     }
 
-    public boolean getGeneratedCodes(String code){
+    private boolean getGeneratedCodes(String code){
         if(!generated_group_codes.isEmpty()){
             for(String x : this.generated_group_codes){
                 if(x.equals(code))
@@ -231,7 +221,7 @@ public class OtherRequests {
         return false;
     }
     
-    public int findUser(String name){
+    private int findUser(String name){
 
         if(!this.clients.isEmpty()){
             for(int i  = 0; i < this.clients.size(); i++){
@@ -242,7 +232,7 @@ public class OtherRequests {
         return -1; 
     }
 
-    public String getGroupCode(String group_name){
+    private String getGroupCode(String group_name){
 
         for(Group g : this.groups){
             if(g.getGroup_name().equals(group_name))

@@ -53,13 +53,14 @@ public class PrivateRequest {
         }
     }
 
-    public void sendMessageToAll(String messaggio, String from_user) throws IOException{
+    private void sendMessageToAll(String messaggio, String from_user) throws IOException{
         if(clients.size() > 1){
             for (ChatApplicationThread user : this.clients) {
                 //Invio il messaggio a tutti tranne che a me stesso
                 if(!user.getUserName().equals(from_user)){
                     //output verso il client destinazione
                     DataOutputStream clientOut = user.getOut();
+                    clientOut.writeBytes("RCV_101\n");
                     clientOut.writeBytes("From " + from_user + ": " + messaggio + "\n");
                 }
             }
@@ -70,7 +71,7 @@ public class PrivateRequest {
     }
 
     //Send message to chat
-    public void sendMessageToChat(String richiesta, String messaggio, String from_user) throws IOException{
+    private void sendMessageToChat(String richiesta, String messaggio, String from_user) throws IOException{
 
         //Recovere the user destination's username
         String user_username = richiesta.substring(1);
@@ -100,7 +101,7 @@ public class PrivateRequest {
     }
 
     //Verifica presenza dell'utente
-    public int findUser(String user_dest){
+    private int findUser(String user_dest){
         
         if(!this.clients.isEmpty()){
             for(int i = 0; i < this.clients.size(); i++){

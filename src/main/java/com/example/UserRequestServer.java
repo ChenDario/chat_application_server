@@ -53,7 +53,7 @@ public class UserRequestServer {
         String[] requests = {
             "@" , "/create_group", 
             "list", "/show_command", 
-            "/request_key"
+            "/request_key", "/users_group"
         };
 
         for(String type: requests){
@@ -95,7 +95,6 @@ public class UserRequestServer {
             // TODO: handle exception
             out.writeBytes("ERROR_500" + "\n");
         }
-
     }
 
 }
