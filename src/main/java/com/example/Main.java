@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
     //Togliere un po' di sout di debug
-public class Main {
+public class Main { //controlla l'eccezione nel server quando un client si disconnette improvvisamente
     public static void main(String[] args) throws IOException {
         //Attributi
         ArrayList<ChatApplicationThread> clients = new ArrayList<>();

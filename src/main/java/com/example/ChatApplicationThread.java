@@ -65,6 +65,7 @@ public class ChatApplicationThread extends Thread {
     }
 
     public void savePublicKey(BufferedReader in) throws IOException{
+        try {
         String message = in.readLine();
         
         String[] publickey = message.split(" ", 2);
@@ -72,13 +73,20 @@ public class ChatApplicationThread extends Thread {
         if(publickey[0].equals("PublicKey") && publickey[1] != null){
             publicKeys.put(userName, publickey[1]);
         }
+        } catch (NullPointerException e) {
+            // TODO: handle exception
+        }
     }
 
     public String getUserName() {
         return this.userName;
     }
 
+    
     public void username_validation(BufferedReader in, DataOutputStream out) throws IOException {
+      try {
+        
+      
         // Validazione dell'username
         String x = "";
         do {
@@ -88,6 +96,10 @@ public class ChatApplicationThread extends Thread {
         } while (x.contains(">") || x.contains("ERROR") || x.contains("<"));
 
         userName = UsernameIdentification.getUsername();
+    } catch (NullPointerException e) {
+        // TODO: handle exception
+        System.out.println("eccezzione gestita!");
+      }
     }
 
     public DataOutputStream getOut() {
