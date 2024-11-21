@@ -81,7 +81,6 @@ public class ChatApplicationThread extends Thread {
     public String getUserName() {
         return this.userName;
     }
-
     
     public void username_validation(BufferedReader in, DataOutputStream out) throws IOException {
       try {
