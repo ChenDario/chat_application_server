@@ -10,13 +10,18 @@ public class UserRequestServer {
 
     public static void receive_user_requests(BufferedReader in, DataOutputStream out, ArrayList<Group> groups, ArrayList<ChatApplicationThread> clients, String from_user, ArrayList<String> generated_group_codes, HashMap<String, String> users_key) throws IOException{
         String user_request = "";
-        do {
-            user_request = in.readLine();
-            if(!user_request.equalsIgnoreCase("Exit")){
-                System.out.println("Stringa ricevuta dal client: " + user_request);
-                identify_request(user_request, groups, clients, in, out, from_user, generated_group_codes, users_key);
-            } 
-        } while (!user_request.equalsIgnoreCase("Exit"));
+        try {
+            do {
+                user_request = in.readLine();
+                if(!user_request.equalsIgnoreCase("Exit")){
+                    System.out.println("Stringa ricevuta dal client: " + user_request);
+                    identify_request(user_request, groups, clients, in, out, from_user, generated_group_codes, users_key);
+                } 
+            } while (!user_request.equalsIgnoreCase("Exit"));
+        } catch (NullPointerException e) {
+            // TODO: handle exception
+            System.err.println("CLIENT DISCONNESSO IMPROVVISAMENTE! \n");
+        }
     }
 
     //Divisione della stringa

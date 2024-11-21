@@ -23,7 +23,7 @@ public class Group {
         if(!findUserInGroup(this.group_creator)){
             group.add(group_creator);
         }
-        if(this.group.isEmpty() || !findUserInGroup(user)){
+        if(!findUserInGroup(user)){
             //If the group is empty
             this.group.add(user);
             return "SUCC_200";
@@ -55,7 +55,7 @@ public class Group {
                     try {
                         DataOutputStream clientOutput = user.getOut();
                         clientOutput.writeBytes("RCV_101\n");
-                        clientOutput.writeBytes("From G@" + this.group_name + " by " + from_user + ": " + messaggio + "\n");
+                        clientOutput.writeBytes("GROUP " + this.group_name + " by " + from_user + ": " + messaggio + "\n");
                     } catch (IOException e) {
                         System.out.println("Errore nell'invio del messaggio a " + username);
                         e.printStackTrace();
@@ -63,7 +63,7 @@ public class Group {
                 }
             }
             //Messaggio inviato con successo
-            out.writeBytes("SUCC_201 \n");
+            out.writeBytes("SUCC_201\n");
             
         } catch (IOException e) {
             // TODO: handle exception

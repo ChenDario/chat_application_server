@@ -38,7 +38,7 @@ public class UsernameIdentification {
         String[] comands = {
             "@" , "/create_group", 
             "list", "/show_command", 
-            "/request_key", "/users_group"
+            "/request_key", "/users_group", " "
         };
 
         for(String comand: comands){
