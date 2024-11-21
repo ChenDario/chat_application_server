@@ -60,8 +60,8 @@ public class PrivateRequest {
                 if(!user.getUserName().equals(from_user)){
                     //output verso il client destinazione
                     DataOutputStream clientOut = user.getOut();
-                    clientOut.writeBytes("RCV_101\n");
-                    clientOut.writeBytes("From " + from_user + ": " + messaggio + "\n");
+                    clientOut.writeBytes("RCV_102\n");
+                    clientOut.writeBytes("(To Everyone)From " + from_user + ": " + messaggio + "\n");
                 }
             }
             out.writeBytes("SUCC_201\n");

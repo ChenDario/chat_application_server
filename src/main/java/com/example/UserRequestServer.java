@@ -10,7 +10,7 @@ public class UserRequestServer {
 
     public static void receive_user_requests(BufferedReader in, DataOutputStream out, ArrayList<Group> groups, ArrayList<ChatApplicationThread> clients, String from_user, ArrayList<String> generated_group_codes, HashMap<String, String> users_key) throws IOException{
         String user_request = "";
-       try {
+        try {
             do {
                 user_request = in.readLine();
                 if(!user_request.equalsIgnoreCase("Exit")){

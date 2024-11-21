@@ -134,12 +134,9 @@ public class OtherRequests {
                     out_dest = clients.get(pos_user).getOut();
                     out_dest.writeBytes("GRP_INFO" + "\n");
                     out_dest.writeBytes(group_name + "\n");
-                    //Sout for debug
-                    System.out.println(group_name);
                     out_dest.writeBytes(getGroupCode(group_name) + "\n");
                     //Sout for debug
-                    System.out.println(getGroupCode(group_name));
-                    System.out.println("Invio dati a user_dest" + clients.get(pos_user).getUserName());
+                    System.out.println("Invio dati a user_dest " + clients.get(pos_user).getUserName());
                 }
             }
 
@@ -191,16 +188,17 @@ public class OtherRequests {
         }
     }
 
+    //Il group code servirà per la codifica aes dei messaggi a gruppo
     private String generateGroupCode(){
-        String character = "0123456789QWERTYUIOPASDFGHJKLZXCVBNM";
+        String character = "0123456789QWERTYUIOPASDFGHJKLZXCVBNMpolikmujnyhbtgvrfcedxwszqa";
         StringBuilder code = new StringBuilder();
         Random random = new Random();
 
         do {
             //Verificare questa linea di codice se resetta tutto o meno
             code.setLength(0);
-            //Genera un codice di 5 caratteri casuali presenti nella stringa character
-            for(int i = 0; i < 5; i++){
+            //Genera un codice di 16 caratteri casuali presenti nella stringa character
+            for(int i = 0; i < 16; i++){
                 //Append a random character from character string at pos = random.nextInt(character.length()) from 0 to character.length()
                 code.append(character.charAt(random.nextInt(character.length())));
             }

@@ -10,7 +10,7 @@ public class Main { //controlla l'eccezione nel server quando un client si disco
     public static void main(String[] args) throws IOException {
         //Attributi
         ArrayList<ChatApplicationThread> clients = new ArrayList<>();
-        ArrayList<Group> groups = new ArrayList<>();
+        ArrayList<Group> groups = new ArrayList<>();    
         ArrayList<String> generated_group_codes = new ArrayList<>();
         HashMap<String, String> publicKeys = new HashMap<>();
 
