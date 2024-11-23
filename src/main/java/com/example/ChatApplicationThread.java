@@ -59,6 +59,7 @@ public class ChatApplicationThread extends Thread {
             } finally {
                 // Rimuovi il client dalla lista dopo la chiusura
                 clients.remove(this);
+                //Toglierlo da tutti i gruppi
                 System.out.println("Client disconnesso e rimosso dalla lista.");
             }
         }
@@ -83,20 +84,20 @@ public class ChatApplicationThread extends Thread {
     }
     
     public void username_validation(BufferedReader in, DataOutputStream out) throws IOException {
-      try {
-        // Validazione dell'username
-        String x = "";
-        do {
-            x = UsernameIdentification.username_status(in, clients);
-            out.writeBytes(x + "\n");
-            System.out.println("Status dell'username: " + x);
-        } while (x.contains(">") || x.contains("ERROR") || x.contains("<"));
+        try {
+            // Validazione dell'username
+            String x = "";
+            do {
+                x = UsernameIdentification.username_status(in, clients);
+                out.writeBytes(x + "\n");
+                System.out.println("Status dell'username: " + x);
+            } while (x.contains(">") || x.contains("ERROR") || x.contains("<"));
 
-        userName = UsernameIdentification.getUsername();
-    } catch (NullPointerException e) {
-        // TODO: handle exception
-        System.out.println("eccezzione gestita!");
-      }
+            userName = UsernameIdentification.getUsername();
+        } catch (NullPointerException e) {
+            // TODO: handle exception
+            System.out.println("eccezzione gestita!");
+        }
     }
 
     public DataOutputStream getOut() {
