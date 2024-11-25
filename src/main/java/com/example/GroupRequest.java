@@ -18,6 +18,7 @@ public class GroupRequest {
 
     //Handle all the group_chat kind of requests
     public void group_requests(String richiesta, String messaggio, String from_user) throws IOException{
+        String ans = "";
         try {
             //Richiesta di stampa di tutti i gruppi che l'utente è dentro
             if(richiesta.charAt(1) == '@'){
@@ -30,20 +31,25 @@ public class GroupRequest {
                     //Se deve mandare un messaggio ad un gruppo, ed è presente
                     if(!messaggio.isBlank() && findGroup(groups, groupName) != -1){
                         System.out.println("Messaggio di gruppo inviato");
-                        groups.get(findGroup(groups, groupName)).sendMessageToGroupChat(clients, out, messaggio, from_user);
-                        out.writeBytes("SUCC_200" + "\n");
+                        ans = groups.get(findGroup(groups, groupName)).sendMessageToGroupChat(clients, out, messaggio, from_user);
+                        //out.writeBytes("SUCC_200" + "\n");
                     } else {
-                        out.writeBytes("ERROR_404" + "\n");
+                        //out.writeBytes("ERROR_404" + "\n");
+                        ans = "ERROR_404";
                     }
                 }
             } else {
-                out.writeBytes("ERROR_405" + "\n");
+                //out.writeBytes("ERROR_405" + "\n");
+                ans = "ERROR_405";
+
             }
         } catch (Exception e) {
             // TODO: handle exception
-            out.writeBytes("ERROR_404" + "\n");
+            //out.writeBytes("ERROR_404" + "\n");
+            ans = "ERROR_404";
+
         }
-        
+        out.writeBytes(ans + "\n");
     }
 
     //If the user is in that group

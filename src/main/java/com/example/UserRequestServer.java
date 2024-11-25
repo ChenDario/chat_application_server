@@ -18,6 +18,8 @@ public class UserRequestServer {
                     identify_request(user_request, groups, clients, in, out, from_user, generated_group_codes, users_key);
                 } 
             } while (!user_request.equalsIgnoreCase("Exit"));
+
+            removeFromGroups(groups, from_user);
         } catch (NullPointerException e) {
             // TODO: handle exception
             System.err.println("CLIENT DISCONNESSO IMPROVVISAMENTE! \n");
@@ -101,6 +103,17 @@ public class UserRequestServer {
         }
     }
 
+    private static void removeFromGroups(ArrayList<Group> groups, String from_user){
+        for(Group g : groups){
+            if(g.findUserInGroup(from_user))
+                g.removeUserFromGroup(from_user);
+        }
+        System.out.println("Rimozione completata");
+        //Debug
+        for(Group g : groups){
+            System.out.println(g.getGroupUsers());
+        }
+    }
 }
 
 
