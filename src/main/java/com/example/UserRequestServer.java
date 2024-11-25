@@ -39,7 +39,6 @@ public class UserRequestServer {
                 System.out.println("Richiesta(Thread): " + request);
                 System.out.println("Messaggio(Thread): " + message);
 
-
                 if(isRequest(request)){
                     //Handle all the request and return the code of the operations
                     request_type(request, message, groups, clients, in, out, from_user, generated_group_codes, users_key);

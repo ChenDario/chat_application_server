@@ -100,7 +100,7 @@ public class OtherRequests {
         }
     }
 
-    private void addUserToGroupChat(String messaggio, ArrayList<Group> groups) throws IOException{
+    private void addUserToGroupChat(String messaggio, ArrayList<Group> groups ) throws IOException{
         //Divide the String in two to get the group_name and the lists of user to add to that group
         String[] group_users = messaggio.split(" - ", 2);
 
