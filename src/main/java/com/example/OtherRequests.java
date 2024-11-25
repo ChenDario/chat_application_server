@@ -35,7 +35,6 @@ public class OtherRequests {
                     break;
 
                 case "/create_group":
-                    //Sout for debug
                     create_group(messaggio, this.groups, from_user);
                     break;
                 
@@ -47,7 +46,7 @@ public class OtherRequests {
                     break;
                 
                 case "/join_G@":
-                    addUserToGroupChat(messaggio, this.groups);
+                    addUserToGroupChat(messaggio, this.groups, from_user);
                     break;
 
                 case "/users_group": //per mostrare tutti i membri di un gruppo
@@ -100,16 +99,18 @@ public class OtherRequests {
         }
     }
 
-    private void addUserToGroupChat(String messaggio, ArrayList<Group> groups) throws IOException{
+    private void addUserToGroupChat(String messaggio, ArrayList<Group> groups, String from_user) throws IOException{
         //Divide the String in two to get the group_name and the lists of user to add to that group
         String[] group_users = messaggio.split(" - ", 2);
 
+        String ans = "";
+        
         //Suddivido il nome del gruppo con quello degli username da aggiungere
         String group_name = group_users[0].trim();
         String add_users = group_users.length > 1 ? group_users[1].trim() : "";
         //Sout for debug
-        System.out.println("Nome gruppo: " + group_name);
-        System.out.println("Nome utenti: " + add_users);
+       // System.out.println("Nome gruppo: " + group_name);
+       // System.out.println("Nome utenti: " + add_users);
 
         int pos_group = findGroup(group_name);
         System.out.println("Pos gruppo: " + pos_group);
@@ -120,15 +121,16 @@ public class OtherRequests {
             for(String name : usernames){
                 int pos_user = findUser(name);
                 //Sout for debug
-                System.out.println("Nome utente: " + name + " Utente in pos: " + pos_user);
+                //System.out.println("Nome utente: " + name + " Utente in pos: " + pos_user);
 
                 DataOutputStream out_dest;
                 //Se l'utente esiste, invia al client il risultato dell'inserimento
                 if(pos_user != -1){
-                    String ans = groups.get(pos_group).addIntoGroup(name);
-                    //Sout for debug
-                    System.out.println(ans);
-                    out.writeBytes(ans + "\n");
+                    ans = groups.get(pos_group).addIntoGroup(name, from_user);
+                    if (ans.equals("SUCC_200")) {
+                        //Sout for debug
+                   // System.out.println(ans);
+                    //out.writeBytes(ans + "\n");
 
                     //Invio all'user che è stato aggiunto i dettagli del gruppo in modo
                     out_dest = clients.get(pos_user).getOut();
@@ -136,11 +138,15 @@ public class OtherRequests {
                     out_dest.writeBytes(group_name + "\n");
                     out_dest.writeBytes(getGroupCode(group_name) + "\n");
                     //Sout for debug
-                    System.out.println("Invio dati a user_dest " + clients.get(pos_user).getUserName());
+                    //System.out.println("Invio dati a user_dest " + clients.get(pos_user).getUserName());
+                    this.out.writeBytes("SUCC_200\n");
+                    }else{
+                        this.out.writeBytes("ERROR_404_G" + "\n");
+                    }
+                    
                 }
             }
 
-            this.out.writeBytes("SUCC_200\n");
         } else {
             this.out.writeBytes("ERROR_404_G" + "\n");
         }

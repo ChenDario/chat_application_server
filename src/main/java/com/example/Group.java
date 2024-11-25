@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Group {
     //ArrayList contenente tutti gli username degli utenti presenti
@@ -19,16 +20,19 @@ public class Group {
         this.group_code = code;
     }
 
-    public String addIntoGroup(String user){
+    public String addIntoGroup(String user, String from_user){ //aggiunge un'utente ad un gruppo
         if(!findUserInGroup(this.group_creator)){
             group.add(group_creator);
         }
-        if(!findUserInGroup(user)){
-            //If the group is empty
-            this.group.add(user);
-            return "SUCC_200";
+        if(findUserInGroup(from_user)){
+            System.out.println("sta provando ad aggiungere al gruppo" + from_user);
+            if(!findUserInGroup(user)){
+                //If the group is empty
+                this.group.add(user);
+                return "SUCC_200";
+            }
         }
-        return "ERROR_404_P"; 
+        return "ERROR_404_G"; 
     }
 
     public String getGroup_name() {
@@ -39,7 +43,7 @@ public class Group {
         this.group_name = group_name;
     }
 
-    public void sendMessageToGroupChat(ArrayList<ChatApplicationThread> clients, DataOutputStream out, String messaggio, String from_user) throws IOException{
+    public String sendMessageToGroupChat(ArrayList<ChatApplicationThread> clients, DataOutputStream out, String messaggio, String from_user) throws IOException {
         //Invio del messaggio ai membri del gruppo
         try {
             // Crea una mappa per una ricerca più rapida dei client per username
@@ -48,28 +52,31 @@ public class Group {
                 clientMap.put(user.getUserName(), user);
             }
 
-            for (String username : this.group) {
-                if (!username.equals(from_user) && clientMap.containsKey(username)) {
-                    ChatApplicationThread user = clientMap.get(username);
-                    
-                    try {
-                        DataOutputStream clientOutput = user.getOut();
-                        clientOutput.writeBytes("RCV_101\n");
-                        clientOutput.writeBytes("GROUP " + this.group_name + " by " + from_user + ": " + messaggio + "\n");
-                    } catch (IOException e) {
-                        System.out.println("Errore nell'invio del messaggio a " + username);
-                        e.printStackTrace();
+            if (findUserInGroup(from_user)) {
+                for (String username : this.group) {
+                    if (!username.equals(from_user) && clientMap.containsKey(username)) {
+                        ChatApplicationThread user = clientMap.get(username);
+                        try {
+                            DataOutputStream clientOutput = user.getOut();
+                            clientOutput.writeBytes("RCV_101\n");
+                            clientOutput.writeBytes("GROUP " + this.group_name + " by " + from_user + ": " + messaggio + "\n");
+                        } catch (IOException e) {
+                            System.out.println("Errore nell'invio del messaggio a " + username);
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
-            //Messaggio inviato con successo
-            out.writeBytes("SUCC_201\n");
-            
-        } catch (IOException e) {
-            // TODO: handle exception
-            out.writeBytes("ERROR_500" + "\n");
+                // Messaggio inviato con successo
+                return "SUCC_200";
+            } 
+            return "ERROR_404_G";
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return "ERROR_404";
     }
+    
 
     public String getGroupUsers(){ 
         String ans = "Group " + this.group_name + " - Users: ";
