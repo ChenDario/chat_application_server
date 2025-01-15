@@ -4,7 +4,6 @@ RUN apt-get update
 RUN apt-get install -y git 
 RUN git clone https://github.com/ChenDario/chat_application_server.git
 EXPOSE 3000
-ENTRYPOINT javac chat_application_server/src/main/java/com.example/Main.java; java Main
-
+ENTRYPOINT javac chat_application_server/src/main/java/com.example/Main.java
 
 
